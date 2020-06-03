@@ -1,0 +1,67 @@
+print("Please enter every of your expression with suitable parentheses and follow the examples below."
+      "\nEg: sin(x)^(1/3), cos(x^(2))^(sin(x))^(ln(x)), e^((1/3)x), sqrt(e^((2/3)x^(sin(x)))), ln(sin(2x)^(sqrt(4x)))")
+print("Parentheses are always needed for fractions but not decimals. \nAlways enter (x/3) as (1/3)x and (1/3x) as (1/3)x^(-1)")
+print("sin(x)^(-1) means (1/sin(x)) but not arcsin(x) and try to express roots other than square roots as fractional power")
+print("Always put x at the very beginning. Eg: Enter xcos(x) but not cos(x)x")
+# 1/x or x^(-1)
+f1="sqrt(e^((2/3)x^(sin(x))))e^((1/3)x)^(sin(ln(cot(x)+1)))"
+f2="e^((1/3)x)^(sin(ln(cot(x)+1)))sqrt(e^((2/3)x^(sin(x))))"
+f3="sin(2x)^(1/3)^(sqrt(4x))"
+f4='sqrt((1/3)e^((2/3)x^(sin(x))))^(4.78(1+cot(x)))'
+f5='sqrt(e^((2/3)x^(sin(x))))e^((1/3)x)^(sin(ln(cot(x)+1)))sqrt((1/3)e^((2/3)x^(sin(x))))^(4.78(1+cot(x)))sin(2x)^(1/3)^(sqrt(4x))tan(x)'
+f6='sin(2x)^(1/3)^(sqrt(4x))sqrt(e^((2/3)x^(sin(x))))e^((1/3)x)^(sin(ln(cot(x)+1)))'
+#exp=input("Enter your expression in terms of x: ")
+exp="ln(x)arcsin(x)x^(x)sqrt(e^(x))"
+nums=['0','1','2','3','4','5','6','7','8','9','.','/']
+mathfunc=["sin(x)","cos(x)","tan(x)","sec(x)","csc(x)","cot(x)",
+        "arcsin(x)","arccos(x)","arctan(x)","arcsec(x)","arccsc(x)","arccot(x)",
+        "ln(x)","log(x)","sqrt(x)","e^(x)","x^(x)"]
+funcs,r1,r2=[],[],[]
+#rbracpos=[]
+
+def listtodict(exp):
+    numkey=[]
+    [numkey.append(i) for i in range(1,len(exp)+1)]
+    return dict(list(zip(numkey,exp)))
+
+def rsmf(rinp):
+    #global rlb,rrb
+    global rbracpos
+    rbracpos,firsttime=[],True
+    rlb,rrb=0,0
+    for i in range(len(rinp)):
+        if rinp[i]==")":
+            rrb+=1
+            if firsttime==True:
+                for j in range(i+1):
+                    if rinp[j]=="(": rlb+=1
+                    if j==i and rlb!=rrb: rlb=0
+            elif firsttime!=True:
+                if i==len(rinp)-1:
+                    rbracpos.append(i)
+                    break
+                elif i!=len(rinp)-1:
+                    for j in range(rbracpos[-1]+1,i+1):
+                        if rinp[j]=="(": rlb+=1
+                        if j==i and rlb!=rrb: rlb=0
+            if rrb!=0 and rlb!=0 and rrb==rlb:
+                rbracpos.append(i)
+                rlb,rrb=0,0
+                firsttime=False
+def sepmulfunc(inp):
+    global rbracpos
+    rsmf(inp)
+    if len(rbracpos)==1:
+        funcs.append(inp)
+        return listtodict(funcs)
+    elif len(rbracpos)>1:
+        for ind,item in enumerate(rbracpos):
+            if ind==0: funcs.append("".join(inp[:item+1]))
+            elif ind>0 and ind!=len(rbracpos)-1: funcs.append("".join(inp[rbracpos[ind-1]+1:rbracpos[ind]+1]))
+            elif ind==len(rbracpos)-1: funcs.append("".join(inp[rbracpos[ind-1]+1:]))
+        return listtodict(funcs)
+
+global rbracpos
+print(sepmulfunc(exp))
+
+#x^(x^(2))
